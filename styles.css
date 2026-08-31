@@ -209,9 +209,10 @@ body {
     color: var(--text-light);
 }
 
-.hero-logo i {
-    font-size: 3.2rem;
-    color: var(--accent-gold);
+.hero-logo-img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
 }
 
