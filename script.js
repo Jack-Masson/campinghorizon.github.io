@@ -251,6 +251,51 @@ document.addEventListener('click', function(event) {
     }
 });
 
+// ===== CONTACT FORM - EMAIL JS ===== 
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize EmailJS with your Public Key
+    // Get your Public Key from EmailJS dashboard (https://dashboard.emailjs.com/)
+    emailjs.init('YOUR_PUBLIC_KEY'); // À remplacer par votre clé publique EmailJS
+    
+    const contactForm = document.getElementById('contactForm');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const templateParams = {
+                to_email: 'hiinteractifstudio@gmail.com',
+                from_name: document.getElementById('name').value,
+                from_email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Send email using EmailJS
+            emailjs.send('service_gj4pgv2', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(function(response) {
+                    console.log('Email sent successfully!', response.status, response.text);
+                    const formMessage = document.getElementById('formMessage');
+                    formMessage.textContent = '✅ Message envoyé avec succès ! Merci de nous avoir contacté.';
+                    formMessage.style.color = '#4CAF50';
+                    formMessage.style.display = 'block';
+                    contactForm.reset();
+                    
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        formMessage.style.display = 'none';
+                    }, 5000);
+                }, function(error) {
+                    console.error('Failed to send email:', error);
+                    const formMessage = document.getElementById('formMessage');
+                    formMessage.textContent = '❌ Erreur lors de l\'envoi du message. Veuillez réessayer.';
+                    formMessage.style.color = '#f44336';
+                    formMessage.style.display = 'block';
+                });
+        });
+    }
+});
+
 // ===== VERSION INFO ===== 
 console.log('Camping Horizon - Version 1.0');
 console.log('Jeu indépendant - 2026');
