@@ -2,8 +2,8 @@
 // À remplacer par les URLs réelles
 const downloadLinks = {
     windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/Camping.Horizon.exe',
-    linux: 'https://example.com/camping-horizon-linux.tar.gz',
-    macos: 'https://example.com/camping-horizon-macos.dmg'
+    linux: '#',
+    macos: '#'
 };
 
 // ===== MOBILE MENU TOGGLE ===== 
