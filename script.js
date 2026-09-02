@@ -1,7 +1,7 @@
 // ===== DOWNLOAD LINKS ===== 
 // À remplacer par les URLs réelles
 const downloadLinks = {
-    windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/Camping.Horizon.exe',
+    windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe',
     linux: '#',
     macos: '#'
 };
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             // Redirect to game or show a message
            // alert('Le jeu sera disponible bientôt !');
-            window.location.href = 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/Camping.Horizon.exe';
+            window.location.href = 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe';
         });
     });
 });
