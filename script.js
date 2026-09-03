@@ -255,7 +255,7 @@ document.addEventListener('click', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize EmailJS with your Public Key
     // Get your Public Key from EmailJS dashboard (https://dashboard.emailjs.com/)
-    emailjs.init('YOUR_PUBLIC_KEY'); // À remplacer par votre clé publique EmailJS
+    emailjs.init('zsb9RG7MQW62SbyFKhTer'); // À remplacer par votre clé publique EmailJS
     
     const contactForm = document.getElementById('contactForm');
     
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Send email using EmailJS
-            emailjs.send('service_gj4pgv2', 'YOUR_TEMPLATE_ID', templateParams)
+            emailjs.send('service_gj4pgv2', 'template_39k9tg8', templateParams)
                 .then(function(response) {
                     console.log('Email sent successfully!', response.status, response.text);
                     const formMessage = document.getElementById('formMessage');
