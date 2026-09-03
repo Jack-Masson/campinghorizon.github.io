@@ -255,7 +255,7 @@ document.addEventListener('click', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize EmailJS with your Public Key
     // Get your Public Key from EmailJS dashboard (https://dashboard.emailjs.com/)
-    emailjs.init('zsb9RG7MQW62SbyFKhTer'); // À remplacer par votre clé publique EmailJS
+    emailjs.init('l4sLe39K1VdZDOuiI'); // À remplacer par votre clé publique EmailJS
     
     const contactForm = document.getElementById('contactForm');
     
