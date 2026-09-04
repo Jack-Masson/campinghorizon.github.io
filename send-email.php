@@ -1,4 +1,4 @@
-<?php
+ <?php
 // ===== CONFIGURATION =====
 $recipient_email = 'hiinteractifstudio@gmail.com';
 $website_name = 'Camping Horizon';
