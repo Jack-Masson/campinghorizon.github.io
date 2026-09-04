@@ -1,5 +1,4 @@
 // ===== DOWNLOAD LINKS ===== 
-// À remplacer par les URLs réelles
 const downloadLinks = {
     windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe',
     linux: '#',
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
             mobileMenuToggle.classList.toggle('active');
         });
 
-        // Close menu when clicking on a link
         const mobileMenuLinks = mobileMenu.querySelectorAll('a');
         mobileMenuLinks.forEach(link => {
             link.addEventListener('click', function() {
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== DOWNLOAD BUTTONS ===== 
 document.addEventListener('DOMContentLoaded', function() {
-    // Hero download buttons
     const downloadButtons = document.querySelectorAll('.download-btn');
     downloadButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -39,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Download section buttons
     const downloadOptions = document.querySelectorAll('.btn-download');
     downloadOptions.forEach(button => {
         button.addEventListener('click', function() {
@@ -49,10 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-/**
- * Handle download action
- * @param {string} os - Operating system (windows, linux, macos)
- */
 function handleDownload(os) {
     if (downloadLinks[os]) {
         window.open(downloadLinks[os], '_blank');
@@ -66,8 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const playButtons = document.querySelectorAll('.btn-play');
     playButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Redirect to game or show a message
-           // alert('Le jeu sera disponible bientôt !');
             window.location.href = 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe';
         });
     });
@@ -94,7 +84,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.addEventListener('DOMContentLoaded', function() {
     const featureCards = document.querySelectorAll('.feature-card');
     
-    // Intersection Observer for fade-in effect
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -156,7 +145,7 @@ window.addEventListener('scroll', () => {
 
 // ===== BUTTON RIPPLE EFFECT ===== 
 document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.btn-play, .download-btn, .btn-download');
+    const buttons = document.querySelectorAll('.btn-play, .download-btn, .btn-download, .btn-submit');
     
     buttons.forEach(button => {
         button.addEventListener('mousedown', function(e) {
@@ -185,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Add ripple animation to stylesheet if not already present
 if (!document.querySelector('style[data-ripple]')) {
     const style = document.createElement('style');
     style.setAttribute('data-ripple', 'true');
@@ -251,47 +239,71 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// ===== CONTACT FORM - EMAIL JS ===== 
+// ===== CONTACT FORM - BACKEND PHP ===== 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize EmailJS with your Public Key
-    // Get your Public Key from EmailJS dashboard (https://dashboard.emailjs.com/)
-    emailjs.init('l4sLe39K1VdZDOuiI'); // À remplacer par votre clé publique EmailJS
-    
     const contactForm = document.getElementById('contactForm');
     
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const templateParams = {
-                to_email: 'hiinteractifstudio@gmail.com',
-                from_name: document.getElementById('name').value,
-                from_email: document.getElementById('email').value,
+            // Récupérer les données du formulaire
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
                 subject: document.getElementById('subject').value,
                 message: document.getElementById('message').value
             };
             
-            // Send email using EmailJS
-            emailjs.send('service_gj4pgv2', 'template_39k9tg8', templateParams)
-                .then(function(response) {
-                    console.log('Email sent successfully!', response.status, response.text);
-                    const formMessage = document.getElementById('formMessage');
-                    formMessage.textContent = '✅ Message envoyé avec succès ! Merci de nous avoir contacté.';
+            // Désactiver le bouton de soumission
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Envoi en cours...';
+            
+            // Envoyer au backend PHP
+            fetch('send-email.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const formMessage = document.getElementById('formMessage');
+                
+                if (data.success) {
+                    formMessage.textContent = '✅ ' + data.message;
                     formMessage.style.color = '#4CAF50';
-                    formMessage.style.display = 'block';
                     contactForm.reset();
-                    
-                    // Hide message after 5 seconds
-                    setTimeout(() => {
-                        formMessage.style.display = 'none';
-                    }, 5000);
-                }, function(error) {
-                    console.error('Failed to send email:', error);
-                    const formMessage = document.getElementById('formMessage');
-                    formMessage.textContent = '❌ Erreur lors de l\'envoi du message. Veuillez réessayer.';
+                } else {
+                    formMessage.textContent = '❌ ' + data.message;
                     formMessage.style.color = '#f44336';
-                    formMessage.style.display = 'block';
-                });
+                }
+                
+                formMessage.style.display = 'block';
+                
+                // Réactiver le bouton
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+                
+                // Masquer le message après 5 secondes
+                setTimeout(() => {
+                    formMessage.style.display = 'none';
+                }, 5000);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                const formMessage = document.getElementById('formMessage');
+                formMessage.textContent = '❌ Erreur de connexion. Veuillez réessayer.';
+                formMessage.style.color = '#f44336';
+                formMessage.style.display = 'block';
+                
+                // Réactiver le bouton
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            });
         });
     }
 });
