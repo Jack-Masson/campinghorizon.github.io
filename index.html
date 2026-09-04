@@ -1,313 +1,331 @@
-// ===== DOWNLOAD LINKS ===== 
-const downloadLinks = {
-    windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe',
-    linux: '#',
-    macos: '#'
-};
-
-// ===== MOBILE MENU TOGGLE ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('active');
-            mobileMenuToggle.classList.toggle('active');
-        });
-
-        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-                mobileMenuToggle.classList.remove('active');
-            });
-        });
-    }
-});
-
-// ===== DOWNLOAD BUTTONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const downloadButtons = document.querySelectorAll('.download-btn');
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const os = this.getAttribute('data-os');
-            handleDownload(os);
-        });
-    });
-
-    const downloadOptions = document.querySelectorAll('.btn-download');
-    downloadOptions.forEach(button => {
-        button.addEventListener('click', function() {
-            const os = this.getAttribute('data-os');
-            handleDownload(os);
-        });
-    });
-});
-
-function handleDownload(os) {
-    if (downloadLinks[os]) {
-        window.open(downloadLinks[os], '_blank');
-    } else {
-        console.error('Invalid operating system:', os);
-    }
-}
-
-// ===== PLAY NOW BUTTONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const playButtons = document.querySelectorAll('.btn-play');
-    playButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe';
-        });
-    });
-});
-
-// ===== SMOOTH SCROLL BEHAVIOR ===== 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }
-    });
-});
-
-// ===== FEATURE CARD ANIMATION ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const featureCards = document.querySelectorAll('.feature-card');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-
-    featureCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-});
-
-// ===== SCROLL ANIMATIONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const animatableElements = document.querySelectorAll('.gallery-item, .stage');
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    animatableElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-});
-
-// ===== NAVBAR SCROLL EFFECT ===== 
-let lastScrollY = 0;
-const navbar = document.querySelector('.navbar');
-
-window.addEventListener('scroll', () => {
-    lastScrollY = window.scrollY;
-    
-    if (lastScrollY > 50) {
-        navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5)';
-    } else {
-        navbar.style.boxShadow = 'none';
-    }
-});
-
-// ===== BUTTON RIPPLE EFFECT ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.btn-play, .download-btn, .btn-download, .btn-submit');
-    
-    buttons.forEach(button => {
-        button.addEventListener('mousedown', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camping Horizon</title>
+    <link rel="icon" type="image/png" href="logo2site.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+				<img src="logo2site.png" alt="Camping Horizon" class="hero-logo-img">
+                <span>CAMPING HORIZON</span>
+            </div>
             
-            const ripple = document.createElement('div');
-            ripple.style.position = 'absolute';
-            ripple.style.width = '20px';
-            ripple.style.height = '20px';
-            ripple.style.background = 'rgba(255, 255, 255, 0.5)';
-            ripple.style.borderRadius = '50%';
-            ripple.style.left = (x - 10) + 'px';
-            ripple.style.top = (y - 10) + 'px';
-            ripple.style.pointerEvents = 'none';
-            ripple.style.animation = 'ripple 0.6s ease-out';
-            ripple.style.opacity = '0.5';
+            <div class="desktop-nav">
+                <a href="#jeu">LE JEU</a>
+                <a href="#fonctionnalites">FONCTIONNALITÉS</a>
+                <a href="#galerie">GALERIE</a>
+                <a href="#telecharger">TÉLÉCHARGER</a>
+                <a href="#contact">CONTACT</a>
+                <button class="btn-play">JOUER MAINTENANT</button>
+            </div>
+
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#jeu">LE JEU</a>
+            <a href="#fonctionnalites">FONCTIONNALITÉS</a>
+            <a href="#galerie">GALERIE</a>
+            <a href="#telecharger">TÉLÉCHARGER</a>
+            <a href="#contact">CONTACT</a>
+            <button class="btn-play">JOUER MAINTENANT</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-logo">
+                <div>
+                    <div>CAMPING</div>
+                    <div>HORIZON</div>
+                </div>
+            </div>
+
+            <h2 class="hero-title">Construisez le camping de vos rêves.</h2>
+
+            <p class="hero-subtitle">
+                Installez vos campeurs, aménagez votre terrain, gérez votre équipe et faites grandir votre camping au cœur de paysages magnifiques.
+            </p>
+
+            <!-- Download Buttons -->
+            <div class="download-buttons">
+                <button class="download-btn" data-os="windows">
+                    <div class="btn-icon">🪟</div>
+                    <div class="btn-label">WINDOWS</div>
+                    <div class="btn-small">Télécharger</div>
+                </button>
+                <button class="download-btn" data-os="linux">
+                    <div class="btn-icon">🐧</div>
+                    <div class="btn-label">LINUX</div>
+                    <div class="btn-small">Télécharger</div>
+                </button>
+                <button class="download-btn" data-os="macos">
+                    <div class="btn-icon">🍎</div>
+                    <div class="btn-label">MACOS</div>
+                    <div class="btn-small">Télécharger</div>
+                </button>
+            </div>
+
+            <p class="hero-info">Version PC • Jeu indépendant</p>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+
+        <!-- Hero Illustration -->
+        <div class="hero-illustration">
+			<img src="imagefontpresentation.png" alt="Camping Horizon" class="hero-illustration">
+        </div>
+    </section>
+
+    <!-- Game Presentation Section -->
+    <section id="jeu" class="game-section">
+        <h2 class="section-title">VOTRE CAMPING. VOTRE HISTOIRE.</h2>
+
+		<div class="game-content">
+			<div class="game-image">
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/KIJ5PVEV_VI?si=JowtbqGDMiq13OPX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+			</div>
+		</div>
+
+            <div class="game-text">
+                <p>
+                    Transformez un petit terrain sauvage en destination incontournable. Construisez, aménagez, accueillez vos visiteurs et prenez les bonnes décisions pour faire prospérer votre camping.
+                </p>
+
+                <p>
+                    Camping Horizon est bien plus qu'un jeu de gestion. C'est une expérience immersive où chaque décision compte, où la stratégie rencontre la détente, et où votre camping devient votre fierté.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="fonctionnalites" class="features-section">
+        <h2 class="section-title">FAITES GRANDIR VOTRE CAMPING</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>CONSTRUISEZ</h3>
+                <p>Créez les emplacements, installez des équipements et développez votre camping.</p>
+            </div>
             
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>ACCUEILLEZ VOS CAMPEURS</h3>
+                <p>Observez les besoins de vos visiteurs et offrez-leur un séjour inoubliable.</p>
+            </div>
             
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-});
-
-if (!document.querySelector('style[data-ripple]')) {
-    const style = document.createElement('style');
-    style.setAttribute('data-ripple', 'true');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// ===== ACCESSIBILITY: FOCUS VISIBLE ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('button, a');
-    
-    buttons.forEach(button => {
-        button.addEventListener('focus', function() {
-            this.style.outline = '2px solid #d4a574';
-            this.style.outlineOffset = '2px';
-        });
-        
-        button.addEventListener('blur', function() {
-            this.style.outline = 'none';
-        });
-    });
-});
-
-// ===== PERFORMANCE: LAZY LOAD IMAGES ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        imageObserver.unobserve(img);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-});
-
-// ===== UTILITY: CLOSE MOBILE MENU ON OUTSIDE CLICK ===== 
-document.addEventListener('click', function(event) {
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    
-    if (mobileMenu && mobileMenuToggle) {
-        if (!event.target.closest('.navbar')) {
-            mobileMenu.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
-        }
-    }
-});
-
-// ===== CONTACT FORM - BACKEND PHP ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contactForm');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-dollar-sign"></i></div>
+                <h3>GÉREZ VOS FINANCES</h3>
+                <p>Contrôlez vos dépenses, fixez vos tarifs et investissez intelligemment.</p>
+            </div>
             
-            // Récupérer les données du formulaire
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value
-            };
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-sparkles"></i></div>
+                <h3>PERSONNALISEZ</h3>
+                <p>Aménagez chaque espace selon votre vision et créez un camping unique.</p>
+            </div>
             
-            // Désactiver le bouton de soumission
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.disabled = true;
-            submitButton.textContent = 'Envoi en cours...';
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-tree"></i></div>
+                <h3>PROFITEZ DE LA NATURE</h3>
+                <p>Découvrez des paysages magnifiques et faites évoluer votre camping au fil des saisons.</p>
+            </div>
             
-            // Envoyer au backend PHP
-            fetch('send-email.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const formMessage = document.getElementById('formMessage');
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-mountain"></i></div>
+                <h3>DEVENEZ INCONTOURNABLE</h3>
+                <p>Développez votre réputation et attirez toujours plus de campeurs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="galerie" class="gallery-section">
+        <h2 class="section-title">EXPLOREZ CAMPING HORIZON</h2>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+				<img src="1.png" alt="Camping Horizon" class="gallery-grid">
+			</div>
+            <div class="gallery-item">
+				<img src="2.png" alt="Camping Horizon" class="gallery-grid">
+			</div>
+            <div class="gallery-item">
+				<img src="3.png" alt="Camping Horizon" class="gallery-grid">
+			</div>
+            <div class="gallery-item">
+				<img src="4.png" alt="Camping Horizon" class="gallery-grid"></img>
+			</div>
+            <div class="gallery-item">
+				<img src="5.png" alt="Camping Horizon" class="gallery-grid"></div>
+            <div class="gallery-item">
+				<img src="6.png" alt="Camping Horizon" class="gallery-grid">
+			</div>
+        </div>
+    </section>
+
+    <!-- Progression Section -->
+    <section class="progression-section">
+        <h2 class="section-title">DE PETIT TERRAIN À GRAND CAMPING</h2>
+
+        <div class="progression-stages">
+            <div class="stage">
+                <div class="stage-number">1</div>
+                <p>PETIT CAMPING</p>
+            </div>
+            <div class="stage-arrow">↓</div>
+            
+            <div class="stage">
+                <div class="stage-number">2</div>
+                <p>PREMIERS CAMPEURS</p>
+            </div>
+            <div class="stage-arrow">↓</div>
+            
+            <div class="stage">
+                <div class="stage-number">3</div>
+                <p>NOUVELLES INSTALLATIONS</p>
+            </div>
+            <div class="stage-arrow">↓</div>
+            
+            <div class="stage">
+                <div class="stage-number">4</div>
+                <p>CAMPING FLORISSANT</p>
+            </div>
+            <div class="stage-arrow">↓</div>
+            
+            <div class="stage">
+                <div class="stage-number">5</div>
+                <p>DESTINATION INCONTOURNABLE</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atmosphere Section -->
+    <section class="atmosphere-section">
+        <div class="atmosphere-box">
+            <h2>Prenez le temps de respirer.</h2>
+            <p>Construisez. Gérez. Explorez.<br />Et profitez simplement de l'horizon.</p>
+        </div>
+
+        <div class="atmosphere-illustration">
+			<img src="banner600230.png" alt="Camping Horizon" class="atmosphere-illustration">
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="telecharger" class="download-section">
+        <div class="download-box">
+            <h2>PRÊT À OUVRIR VOTRE CAMPING ?</h2>
+            <p>Téléchargez Camping Horizon et commencez votre aventure.</p>
+
+            <div class="download-options">
+                <div class="download-option">
+                    <div class="option-icon">🪟</div>
+                    <p class="option-label">WINDOWS</p>
+                    <button class="btn-download" data-os="windows">Télécharger</button>
+                </div>
                 
-                if (data.success) {
-                    formMessage.textContent = '✅ ' + data.message;
-                    formMessage.style.color = '#4CAF50';
-                    contactForm.reset();
-                } else {
-                    formMessage.textContent = '❌ ' + data.message;
-                    formMessage.style.color = '#f44336';
-                }
+                <div class="download-option">
+                    <div class="option-icon">🐧</div>
+                    <p class="option-label">LINUX</p>
+                    <button class="btn-download" data-os="linux">Télécharger</button>
+                </div>
                 
-                formMessage.style.display = 'block';
-                
-                // Réactiver le bouton
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-                
-                // Masquer le message après 5 secondes
-                setTimeout(() => {
-                    formMessage.style.display = 'none';
-                }, 5000);
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                const formMessage = document.getElementById('formMessage');
-                formMessage.textContent = '❌ Erreur de connexion. Veuillez réessayer.';
-                formMessage.style.color = '#f44336';
-                formMessage.style.display = 'block';
-                
-                // Réactiver le bouton
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            });
-        });
-    }
-});
+                <div class="download-option">
+                    <div class="option-icon">🍎</div>
+                    <p class="option-label">MACOS</p>
+                    <button class="btn-download" data-os="macos">Télécharger</button>
+                </div>
+            </div>
 
-// ===== VERSION INFO ===== 
-console.log('Camping Horizon - Version 1.0');
-console.log('Jeu indépendant - 2026');
+            <p class="compatible-info">Compatible Windows • Linux • macOS</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="contact-container">
+            <h2 class="section-title">NOUS CONTACTER</h2>
+            <p class="contact-subtitle">Vous avez des questions ? Envoyez-nous un message !</p>
+
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Nom</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Sujet</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Envoyer</button>
+                <p id="formMessage" class="form-message"></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CAMPING HORIZON</h3>
+                <p>"Construisez votre camping. Créez votre horizon."</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#jeu">Le jeu</a></li>
+                    <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+                    <li><a href="#galerie">Galerie</a></li>
+                    <li><a href="#telecharger">Télécharger</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Communauté</h4>
+                <ul>
+                    <li><a href="https://discord.gg/BZCk7ngbtH">Discord</a></li>
+                    <li><a href="https://www.twitch.tv/jack_masson">Twitch</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 Camping Horizon. Tous droits réservés.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
