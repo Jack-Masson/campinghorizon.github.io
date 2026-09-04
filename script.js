@@ -241,73 +241,123 @@ document.addEventListener('click', function(event) {
 
 // ===== CONTACT FORM - BACKEND PHP ===== 
 document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contactForm');
+    console.log('Initialisation du formulaire de contact...');
     
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+    const contactForm = document.getElementById('contactForm');
+    const formMessage = document.getElementById('formMessage');
+    
+    if (!contactForm) {
+        console.error('Formulaire de contact non trouvé !');
+        return;
+    }
+    
+    if (!formMessage) {
+        console.error('Élément formMessage non trouvé !');
+        return;
+    }
+    
+    console.log('✅ Formulaire et message trouvés');
+    
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log('Formulaire soumis');
+        
+        // Récupérer les données du formulaire
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        
+        console.log('Données collectées:', { name, email, subject });
+        
+        // Validation locale rapide
+        if (!name || !email || !subject || !message) {
+            showMessage('❌ Veuillez remplir tous les champs', 'error');
+            return;
+        }
+        
+        const formData = {
+            name: name,
+            email: email,
+            subject: subject,
+            message: message
+        };
+        
+        // Désactiver le bouton de soumission
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.textContent = '⏳ Envoi en cours...';
+        
+        console.log('Envoi de la requête...');
+        
+        // Envoyer au backend PHP
+        fetch('send-email.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            console.log('Réponse reçue:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Données JSON reçues:', data);
             
-            // Récupérer les données du formulaire
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value
-            };
+            if (data.success) {
+                showMessage('✅ ' + data.message, 'success');
+                contactForm.reset();
+                console.log('✅ Message envoyé avec succès');
+            } else {
+                showMessage('❌ ' + data.message, 'error');
+                console.error('❌ Erreur serveur:', data.message);
+            }
             
-            // Désactiver le bouton de soumission
-            const submitButton = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.disabled = true;
-            submitButton.textContent = 'Envoi en cours...';
+            // Réactiver le bouton
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+        })
+        .catch(error => {
+            console.error('❌ Erreur réseau:', error);
+            showMessage('❌ Erreur de connexion. Vérifiez que send-email.php existe.', 'error');
             
-            // Envoyer au backend PHP
-            fetch('send-email.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const formMessage = document.getElementById('formMessage');
-                
-                if (data.success) {
-                    formMessage.textContent = '✅ ' + data.message;
-                    formMessage.style.color = '#4CAF50';
-                    contactForm.reset();
-                } else {
-                    formMessage.textContent = '❌ ' + data.message;
-                    formMessage.style.color = '#f44336';
-                }
-                
-                formMessage.style.display = 'block';
-                
-                // Réactiver le bouton
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-                
-                // Masquer le message après 5 secondes
-                setTimeout(() => {
-                    formMessage.style.display = 'none';
-                }, 5000);
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                const formMessage = document.getElementById('formMessage');
-                formMessage.textContent = '❌ Erreur de connexion. Veuillez réessayer.';
-                formMessage.style.color = '#f44336';
-                formMessage.style.display = 'block';
-                
-                // Réactiver le bouton
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            });
+            // Réactiver le bouton
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
         });
+    });
+    
+    // Fonction pour afficher les messages
+    function showMessage(text, type) {
+        formMessage.textContent = text;
+        formMessage.style.display = 'block';
+        
+        if (type === 'success') {
+            formMessage.style.color = '#4CAF50';
+            formMessage.style.backgroundColor = '#f1f8f4';
+            formMessage.style.padding = '15px';
+            formMessage.style.borderRadius = '5px';
+            formMessage.style.marginTop = '15px';
+        } else if (type === 'error') {
+            formMessage.style.color = '#f44336';
+            formMessage.style.backgroundColor = '#fef5f5';
+            formMessage.style.padding = '15px';
+            formMessage.style.borderRadius = '5px';
+            formMessage.style.marginTop = '15px';
+        }
+        
+        console.log('Message affiché:', text);
+        
+        // Masquer le message après 6 secondes
+        setTimeout(() => {
+            formMessage.style.display = 'none';
+        }, 6000);
     }
 });
 
 // ===== VERSION INFO ===== 
 console.log('Camping Horizon - Version 1.0');
 console.log('Jeu indépendant - 2026');
+console.log('✅ Scripts chargés avec succès');
