@@ -1,363 +1,344 @@
-// ===== DOWNLOAD LINKS ===== 
-const downloadLinks = {
-    windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe',
-    linux: '#',
-    macos: '#'
+/**
+ * Camping Horizon - Script Principal
+ * Version 1.0
+ * Features: Menu mobile, Téléchargements, Animations, Contact Formspree
+ */
+
+// ===== CONFIG =====
+const CONFIG = {
+	formspreeId: 'xwlknydw',
+	downloadLinks: {
+		windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe',
+		linux: '#',
+		macos: '#'
+	}
 };
 
-// ===== MOBILE MENU TOGGLE ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    if (mobileMenuToggle && mobileMenu) {
-        mobileMenuToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('active');
-            mobileMenuToggle.classList.toggle('active');
-        });
+/**
+ * ===== UTILITY FUNCTIONS =====
+ */
 
-        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
-                mobileMenuToggle.classList.remove('active');
-            });
-        });
-    }
+/**
+ * Get Formspree URL
+ */
+function getFormspreeUrl() {
+	return `https://formspree.io/f/${CONFIG.formspreeId}`;
+}
+
+/**
+ * ===== INITIALIZATION =====
+ */
+document.addEventListener('DOMContentLoaded', function() {
+	initMobileMenu();
+	initDownloadButtons();
+	initPlayButtons();
+	initContactForm();
+	initScrollAnimations();
+	initNavbarEffect();
+	initAccessibility();
 });
 
-// ===== DOWNLOAD BUTTONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const downloadButtons = document.querySelectorAll('.download-btn');
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const os = this.getAttribute('data-os');
-            handleDownload(os);
-        });
-    });
+/**
+ * ===== MOBILE MENU =====
+ */
+function initMobileMenu() {
+	const toggle = document.getElementById('mobileMenuToggle');
+	const menu = document.getElementById('mobileMenu');
 
-    const downloadOptions = document.querySelectorAll('.btn-download');
-    downloadOptions.forEach(button => {
-        button.addEventListener('click', function() {
-            const os = this.getAttribute('data-os');
-            handleDownload(os);
-        });
-    });
-});
+	if (!toggle || !menu) return;
+
+	toggle.addEventListener('click', function() {
+		menu.classList.toggle('active');
+		toggle.classList.toggle('active');
+	});
+
+	// Fermer le menu au clic sur un lien
+	menu.querySelectorAll('a').forEach(link => {
+		link.addEventListener('click', function() {
+			menu.classList.remove('active');
+			toggle.classList.remove('active');
+		});
+	});
+
+	// Fermer le menu au clic extérieur
+	document.addEventListener('click', function(event) {
+		if (!event.target.closest('.navbar')) {
+			menu.classList.remove('active');
+			toggle.classList.remove('active');
+		}
+	});
+}
+
+/**
+ * ===== DOWNLOAD BUTTONS =====
+ */
+function initDownloadButtons() {
+	const downloadButtons = document.querySelectorAll('.download-btn, .btn-download');
+
+	downloadButtons.forEach(button => {
+		button.addEventListener('click', function() {
+			const os = this.getAttribute('data-os');
+			handleDownload(os);
+		});
+	});
+}
 
 function handleDownload(os) {
-    if (downloadLinks[os]) {
-        window.open(downloadLinks[os], '_blank');
-    } else {
-        console.error('Invalid operating system:', os);
-    }
+	const url = CONFIG.downloadLinks[os];
+
+	if (url && url !== '#') {
+		window.open(url, '_blank');
+	} else {
+		console.warn(`Téléchargement non disponible pour: ${os}`);
+	}
 }
 
-// ===== PLAY NOW BUTTONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const playButtons = document.querySelectorAll('.btn-play');
-    playButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            window.location.href = 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/Game/CampingHorizonLauncher.exe';
-        });
-    });
-});
+/**
+ * ===== PLAY BUTTONS =====
+ */
+function initPlayButtons() {
+	const playButtons = document.querySelectorAll('.btn-play');
 
-// ===== SMOOTH SCROLL BEHAVIOR ===== 
+	playButtons.forEach(button => {
+		button.addEventListener('click', function() {
+			handleDownload('windows');
+		});
+	});
+}
+
+/**
+ * ===== CONTACT FORM - FORMSPREE =====
+ */
+function initContactForm() {
+	const form = document.getElementById('contactForm');
+
+	if (!form) return;
+
+	form.addEventListener('submit', async function(e) {
+		e.preventDefault();
+
+		const submitButton = form.querySelector('button[type="submit"]');
+		const messageDiv = document.getElementById('formMessage');
+		const originalButtonText = submitButton.textContent;
+
+		// Désactiver le bouton
+		submitButton.disabled = true;
+		submitButton.textContent = '⏳ Envoi...';
+
+		try {
+			const formData = new FormData(form);
+
+			const response = await fetch(getFormspreeUrl(), {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'Accept': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				// Succès
+				showFormMessage('✅ Message envoyé avec succès !', 'success');
+				submitButton.textContent = '✓ Envoyé';
+				form.reset();
+
+				// Restaurer après 3 secondes
+				setTimeout(() => {
+					submitButton.disabled = false;
+					submitButton.textContent = originalButtonText;
+					messageDiv.textContent = '';
+				}, 3000);
+
+				console.log('✅ Message envoyé');
+			} else {
+				throw new Error('Erreur serveur');
+			}
+		} catch (error) {
+			// Erreur
+			showFormMessage('❌ Erreur lors de l\'envoi. Veuillez réessayer.', 'error');
+			submitButton.disabled = false;
+			submitButton.textContent = originalButtonText;
+			console.error('Erreur:', error);
+		}
+	});
+}
+
+/**
+ * Afficher un message du formulaire
+ */
+function showFormMessage(text, type) {
+	const messageDiv = document.getElementById('formMessage');
+
+	messageDiv.textContent = text;
+	messageDiv.className = `form-message ${type}`;
+
+	// Masquer après 5 secondes
+	setTimeout(() => {
+		messageDiv.textContent = '';
+		messageDiv.className = 'form-message';
+	}, 5000);
+}
+
+/**
+ * ===== SCROLL ANIMATIONS =====
+ */
+function initScrollAnimations() {
+	// Feature cards
+	const featureCards = document.querySelectorAll('.feature-card');
+
+	const cardObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.style.opacity = '1';
+					entry.target.style.transform = 'translateY(0)';
+				}
+			});
+		},
+		{ threshold: 0.1 }
+	);
+
+	featureCards.forEach(card => {
+		card.style.opacity = '0';
+		card.style.transform = 'translateY(20px)';
+		card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+		cardObserver.observe(card);
+	});
+
+	// Gallery items & stages
+	const animatableElements = document.querySelectorAll('.gallery-item, .stage');
+
+	const elementObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.style.opacity = '1';
+					entry.target.style.transform = 'translateY(0)';
+					elementObserver.unobserve(entry.target);
+				}
+			});
+		},
+		{
+			threshold: 0.1,
+			rootMargin: '0px 0px -100px 0px'
+		}
+	);
+
+	animatableElements.forEach(el => {
+		el.style.opacity = '0';
+		el.style.transform = 'translateY(20px)';
+		el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+		elementObserver.observe(el);
+	});
+}
+
+/**
+ * ===== NAVBAR SCROLL EFFECT =====
+ */
+function initNavbarEffect() {
+	const navbar = document.querySelector('.navbar');
+
+	if (!navbar) return;
+
+	window.addEventListener('scroll', function() {
+		if (window.scrollY > 50) {
+			navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5)';
+		} else {
+			navbar.style.boxShadow = 'none';
+		}
+	});
+}
+
+/**
+ * ===== SMOOTH SCROLL LINKS =====
+ */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }
-    });
+	anchor.addEventListener('click', function(e) {
+		const href = this.getAttribute('href');
+
+		if (href === '#') return;
+
+		e.preventDefault();
+
+		const target = document.querySelector(href);
+
+		if (target) {
+			target.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start'
+			});
+		}
+	});
 });
 
-// ===== FEATURE CARD ANIMATION ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const featureCards = document.querySelectorAll('.feature-card');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
+/**
+ * ===== ACCESSIBILITY =====
+ */
+function initAccessibility() {
+	const buttons = document.querySelectorAll('button, a');
 
-    featureCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-});
+	buttons.forEach(button => {
+		button.addEventListener('focus', function() {
+			this.style.outline = '2px solid #d4a574';
+			this.style.outlineOffset = '2px';
+		});
 
-// ===== SCROLL ANIMATIONS ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const animatableElements = document.querySelectorAll('.gallery-item, .stage');
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    animatableElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-});
-
-// ===== NAVBAR SCROLL EFFECT ===== 
-let lastScrollY = 0;
-const navbar = document.querySelector('.navbar');
-
-window.addEventListener('scroll', () => {
-    lastScrollY = window.scrollY;
-    
-    if (lastScrollY > 50) {
-        navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5)';
-    } else {
-        navbar.style.boxShadow = 'none';
-    }
-});
-
-// ===== BUTTON RIPPLE EFFECT ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.btn-play, .download-btn, .btn-download, .btn-submit');
-    
-    buttons.forEach(button => {
-        button.addEventListener('mousedown', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const ripple = document.createElement('div');
-            ripple.style.position = 'absolute';
-            ripple.style.width = '20px';
-            ripple.style.height = '20px';
-            ripple.style.background = 'rgba(255, 255, 255, 0.5)';
-            ripple.style.borderRadius = '50%';
-            ripple.style.left = (x - 10) + 'px';
-            ripple.style.top = (y - 10) + 'px';
-            ripple.style.pointerEvents = 'none';
-            ripple.style.animation = 'ripple 0.6s ease-out';
-            ripple.style.opacity = '0.5';
-            
-            this.style.position = 'relative';
-            this.style.overflow = 'hidden';
-            this.appendChild(ripple);
-            
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-});
-
-if (!document.querySelector('style[data-ripple]')) {
-    const style = document.createElement('style');
-    style.setAttribute('data-ripple', 'true');
-    style.textContent = `
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+		button.addEventListener('blur', function() {
+			this.style.outline = 'none';
+		});
+	});
 }
 
-// ===== ACCESSIBILITY: FOCUS VISIBLE ===== 
+/**
+ * ===== RIPPLE EFFECT =====
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('button, a');
-    
-    buttons.forEach(button => {
-        button.addEventListener('focus', function() {
-            this.style.outline = '2px solid #d4a574';
-            this.style.outlineOffset = '2px';
-        });
-        
-        button.addEventListener('blur', function() {
-            this.style.outline = 'none';
-        });
-    });
+	const buttons = document.querySelectorAll('.btn-play, .download-btn, .btn-download, .btn-submit');
+
+	buttons.forEach(button => {
+		button.addEventListener('mousedown', function(e) {
+			const rect = this.getBoundingClientRect();
+			const x = e.clientX - rect.left;
+			const y = e.clientY - rect.top;
+
+			const ripple = document.createElement('div');
+			ripple.style.position = 'absolute';
+			ripple.style.width = '20px';
+			ripple.style.height = '20px';
+			ripple.style.background = 'rgba(255, 255, 255, 0.5)';
+			ripple.style.borderRadius = '50%';
+			ripple.style.left = (x - 10) + 'px';
+			ripple.style.top = (y - 10) + 'px';
+			ripple.style.pointerEvents = 'none';
+			ripple.style.animation = 'ripple 0.6s ease-out';
+
+			this.style.position = 'relative';
+			this.style.overflow = 'hidden';
+			this.appendChild(ripple);
+
+			setTimeout(() => ripple.remove(), 600);
+		});
+	});
+
+	// Ajouter l'animation ripple au CSS si elle n'existe pas
+	if (!document.querySelector('style[data-ripple]')) {
+		const style = document.createElement('style');
+		style.setAttribute('data-ripple', 'true');
+		style.textContent = `
+			@keyframes ripple {
+				to {
+					transform: scale(4);
+					opacity: 0;
+				}
+			}
+		`;
+		document.head.appendChild(style);
+	}
 });
 
-// ===== PERFORMANCE: LAZY LOAD IMAGES ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        imageObserver.unobserve(img);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-});
-
-// ===== UTILITY: CLOSE MOBILE MENU ON OUTSIDE CLICK ===== 
-document.addEventListener('click', function(event) {
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    
-    if (mobileMenu && mobileMenuToggle) {
-        if (!event.target.closest('.navbar')) {
-            mobileMenu.classList.remove('active');
-            mobileMenuToggle.classList.remove('active');
-        }
-    }
-});
-
-// ===== CONTACT FORM - BACKEND PHP ===== 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initialisation du formulaire de contact...');
-    
-    const contactForm = document.getElementById('contactForm');
-    const formMessage = document.getElementById('formMessage');
-    
-    if (!contactForm) {
-        console.error('Formulaire de contact non trouvé !');
-        return;
-    }
-    
-    if (!formMessage) {
-        console.error('Élément formMessage non trouvé !');
-        return;
-    }
-    
-    console.log('✅ Formulaire et message trouvés');
-    
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        console.log('Formulaire soumis');
-        
-        // Récupérer les données du formulaire
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        console.log('Données collectées:', { name, email, subject });
-        
-        // Validation locale rapide
-        if (!name || !email || !subject || !message) {
-            showMessage('❌ Veuillez remplir tous les champs', 'error');
-            return;
-        }
-        
-        const formData = {
-            name: name,
-            email: email,
-            subject: subject,
-            message: message
-        };
-        
-        // Désactiver le bouton de soumission
-        const submitButton = contactForm.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        submitButton.disabled = true;
-        submitButton.textContent = '⏳ Envoi en cours...';
-        
-        console.log('Envoi de la requête...');
-        
-        // Envoyer au backend PHP
-        fetch('send-email.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            console.log('Réponse reçue:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Données JSON reçues:', data);
-            
-            if (data.success) {
-                showMessage('✅ ' + data.message, 'success');
-                contactForm.reset();
-                console.log('✅ Message envoyé avec succès');
-            } else {
-                showMessage('❌ ' + data.message, 'error');
-                console.error('❌ Erreur serveur:', data.message);
-            }
-            
-            // Réactiver le bouton
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-        })
-        .catch(error => {
-            console.error('❌ Erreur réseau:', error);
-            showMessage('❌ Erreur de connexion. Vérifiez que send-email.php existe.', 'error');
-            
-            // Réactiver le bouton
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-        });
-    });
-    
-    // Fonction pour afficher les messages
-    function showMessage(text, type) {
-        formMessage.textContent = text;
-        formMessage.style.display = 'block';
-        
-        if (type === 'success') {
-            formMessage.style.color = '#4CAF50';
-            formMessage.style.backgroundColor = '#f1f8f4';
-            formMessage.style.padding = '15px';
-            formMessage.style.borderRadius = '5px';
-            formMessage.style.marginTop = '15px';
-        } else if (type === 'error') {
-            formMessage.style.color = '#f44336';
-            formMessage.style.backgroundColor = '#fef5f5';
-            formMessage.style.padding = '15px';
-            formMessage.style.borderRadius = '5px';
-            formMessage.style.marginTop = '15px';
-        }
-        
-        console.log('Message affiché:', text);
-        
-        // Masquer le message après 6 secondes
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 6000);
-    }
-});
-
-// ===== VERSION INFO ===== 
-console.log('Camping Horizon - Version 1.0');
+/**
+ * ===== LOGGER =====
+ */
+console.log('%c🏕️ Camping Horizon - Version 1.0', 'font-size: 16px; font-weight: bold; color: #d4a574;');
 console.log('Jeu indépendant - 2026');
 console.log('✅ Scripts chargés avec succès');
