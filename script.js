@@ -8,7 +8,7 @@
 const CONFIG = {
 	formspreeId: 'xwlknydw',
 	downloadLinks: {
-		windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/NewLauncher/CampingHorizonInstall.exe',
+		windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/NewLauncher/Camping.Horizon.Installer.exe',
 		linux: '#',
 		macos: '#'
 	}
