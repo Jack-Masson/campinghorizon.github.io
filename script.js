@@ -9,7 +9,7 @@ const CONFIG = {
 	formspreeId: 'xwlknydw',
 	downloadLinks: {
 		windows: 'https://github.com/Jack-Masson/Camping_Horizon/releases/download/NewLauncher/Camping.Horizon.Launcher.exe',
-		linux: '#',
+		linux: 'https://sheppard08.itch.io/camping-horizon',
 		macos: '#'
 	}
 };
